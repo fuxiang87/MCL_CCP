@@ -21,4 +21,4 @@ To produce contour-guided color palette segmentation result and run "CCP_segment
 If you use this code in a publication, I would be grateful if you cite our paper.
 For any question, please contact us via the E-mail: xiangfu AT usc DOT edu or fuxiang87 AT gmail DOT com.
 
-September 11, 2015
+September 12, 2015
