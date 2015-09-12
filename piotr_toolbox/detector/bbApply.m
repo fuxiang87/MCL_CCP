@@ -58,9 +58,8 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 3.24
-% Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 3.30
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 %#ok<*DEFNU>
@@ -297,7 +296,7 @@ if(isempty(col)), if(k==1), col='g'; else col=hsv(k); end; end
 if(size(col,1)<k), ids=ones(1,n); end; hs=zeros(1,n);
 % draw rectangles and optionally labels
 for b=1:n, hs(b)=rectangle('Position',bb(b,1:4),prop{:},col(ids(b),:)); end
-if(m==4), return; end; hs=[hs zeros(1,n)];
+if(m==4), return; end; hs=[hs zeros(1,n)]; bb=double(bb);
 for b=1:n, hs(b+n)=text(bb(b,1),bb(b,2),num2str(bb(b,5),4),tProp{:}); end
 end
 
@@ -348,7 +347,7 @@ bb(:,1:4)=intersect(bb(:,1:4),[1 1 w h]);
 for b=1:n
   M=char2img(sprintf('%.4g',bb(b,5)),fh); M=M{1}==0; [h,w]=size(M);
   y0=bb(b,2); y1=y0+h-1; x0=bb(b,1); x1=x0+w-1;
-  if( x0>=1 && y0>=1 && x1<=size(I,2) && y1<=size(I,2))
+  if( x0>=1 && y0>=1 && x1<=size(I,2) && y1<=size(I,1))
     Ir=I(y0:y1,x0:x1,1); Ig=I(y0:y1,x0:x1,2); Ib=I(y0:y1,x0:x1,3);
     Ir(M)=fcol(b,1); Ig(M)=fcol(b,2); Ib(M)=fcol(b,3);
     I(y0:y1,x0:x1,:)=cat(3,Ir,Ig,Ib);

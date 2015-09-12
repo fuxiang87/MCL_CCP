@@ -30,8 +30,7 @@ function [E,O,inds,segs] = edgesDetect( I, model )
 % Licensed under the MSR-LA Full Rights License [see license.txt]
 
 % get parameters
-opts=model.opts;
-opts.nTreesEval=min(opts.nTreesEval,opts.nTrees);
+opts=model.opts; opts.nTreesEval=min(opts.nTreesEval,opts.nTrees);
 if(~isfield(opts,'sharpen')), opts.sharpen=0; end
 if(~isfield(model,'segs')), model.segs=[]; model.nSegs=[]; end
 opts.stride=max(opts.stride,opts.shrink); model.opts=opts;

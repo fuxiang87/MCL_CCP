@@ -1,6 +1,6 @@
 This code is to implement contour-guided color palette segmentation method described in: 
 "Robust Image Segmentation Using Contour-guided Color Palettes" by Xiang Fu, Chien-Yi Wang, Chen Chen, Changhu Wang and C.-C. Jay Kuo, ICCV 2015.
-It is written in MATLAB, and has been tested under Windows and Mac OSX.
+It is written in MATLAB, and has been tested under Windows and Mac OSX (64 bits).
 
 To produce contour-guided color palette segmentation result and run "CCP_segmentation.m", you need three toolboxes that are already in the folder.
 

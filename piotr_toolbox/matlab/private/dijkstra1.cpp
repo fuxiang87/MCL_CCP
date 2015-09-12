@@ -1,19 +1,18 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.20
-* Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
-* Please email me if you find bugs, or have suggestions or questions!
+* Piotr's Computer Vision Matlab Toolbox      Version 3.20
+* Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
 
-/**************************************************************************
- * Based on ISOMAP code which can be found at http:*isomap.stanford.edu/.
- * See accompanying m file (dijkstra.m) for usage.
- *************************************************************************/
+/*******************************************************************************
+* Based on ISOMAP code which can be found at http:*isomap.stanford.edu/.
+* See accompanying m file (dijkstra.m) for usage.
+*******************************************************************************/
 
-/**************************************************************************
- * Bug fix for certain versions of VC++ compiler when used in Matlab.
- * http://www.mathworks.com/matlabcentral/newsreader/view_thread/281754
- *************************************************************************/
+/*******************************************************************************
+* Bug fix for certain versions of VC++ compiler when used in Matlab.
+* http://www.mathworks.com/matlabcentral/newsreader/view_thread/281754
+*******************************************************************************/
 #if (_MSC_VER >= 1600)
 #define __STDC_UTF_16__
 typedef unsigned short char16_t;
@@ -23,9 +22,9 @@ typedef unsigned short char16_t;
 #include "fibheap.h"
 #define DIJKSTRA_CPP
 
-/**************************************************************************
- * class HeapNode
- *************************************************************************/
+/*******************************************************************************
+* class HeapNode
+*******************************************************************************/
 class HeapNode : public FibHeapNode {
   double   N;
   long int IndexV;
@@ -71,9 +70,9 @@ int  HeapNode::operator <(FibHeapNode& RHS) {
     return N < ((HeapNode&) RHS).N ? 1 : 0;
 };
 
-/*************************************************************************
- * main
- *************************************************************************/
+/*******************************************************************************
+* main
+*******************************************************************************/
 void dijkstra1( long int n, long int s, double *D1, double *P1, double *Gpr, mwIndex *Gir, mwIndex *Gjc) {
   int      finished;
   long int i, startInd, endInd, whichNeigh, nDone, closest;

@@ -31,9 +31,8 @@ function bbs = acfDetect( I, detector, fileName )
 %
 % See also acfTrain, acfModify, bbGt>loadAll, bbNms
 %
-% Piotr's Image&Video Toolbox      Version 3.20
-% Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 3.40
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % run detector on every image
@@ -62,9 +61,16 @@ opts=Ds{1}.opts; pPyramid=opts.pPyramid; pNms=opts.pNms;
 imreadf=opts.imreadf; imreadp=opts.imreadp;
 shrink=pPyramid.pChns.shrink; pad=pPyramid.pad;
 separate=nDs>1 && isfield(pNms,'separate') && pNms.separate;
-% perform actual computations
+% read image and compute features (including optionally applying filters)
 if(all(ischar(I))), I=feval(imreadf,I,imreadp{:}); end
-P = chnsPyramid(I,pPyramid); bbs = cell(P.nScales,nDs);
+P=chnsPyramid(I,pPyramid); bbs=cell(P.nScales,nDs);
+if(isfield(opts,'filters') && ~isempty(opts.filters)), shrink=shrink*2;
+  for i=1:P.nScales, fs=opts.filters; C=repmat(P.data{i},[1 1 size(fs,4)]);
+    for j=1:size(C,3), C(:,:,j)=conv2(C(:,:,j),fs(:,:,j),'same'); end
+    P.data{i}=imResample(C,.5);
+  end
+end
+% apply sliding window classifiers
 for i=1:P.nScales
   for j=1:nDs, opts=Ds{j}.opts;
     modelDsPad=opts.modelDsPad; modelDs=opts.modelDs;

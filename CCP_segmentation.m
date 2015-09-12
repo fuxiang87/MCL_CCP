@@ -7,7 +7,7 @@
 % Xiang Fu: xiangfu AT usc DOT edu or fuxiang87 AT gmail DOT com
 
 %%% Contour-guided Color Palette Segmentation
-%clear all; close all; clc;
+clear all; close all; clc;
 
 addpath(genpath('./'));
 % addpath(genpath('piotr_toolbox'))

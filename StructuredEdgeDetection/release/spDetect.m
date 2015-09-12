@@ -44,7 +44,7 @@ function [S,V] = spDetect( I, E, varargin )
 
 % get default parameters
 dfs = { 'type','sticky', 'nIter',4, 'nThreads',4, 'k',512, ...
-  'alpha',.5, 'beta',.9, 'merge',100, 'bounds',1, 'seed',[] };
+  'alpha',.5, 'beta',.9, 'merge',0, 'bounds',1, 'seed',[] };
 o = getPrmDflt(varargin,dfs,1); if(nargin==0), S=o; return; end
 type=lower(o.type(1)); assert( type=='w' || type=='s' );
 sigs = [ o.k*o.alpha/1e4 o.alpha/1e4 ...

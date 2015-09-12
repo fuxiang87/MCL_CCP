@@ -79,9 +79,8 @@ function varargout = bbGt( action, varargin )
 % bbGt>loadAll, bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes,
 % bbGt>compOas, bbGt>compOa
 %
-% Piotr's Image&Video Toolbox      Version 3.20
-% Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 3.26
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 %#ok<*DEFNU>
@@ -150,7 +149,8 @@ function [objs,bbs] = bbLoad( fName, varargin )
 % the PASCAL VOC: http://pascallin.ecs.soton.ac.uk/challenges/VOC/. Objects
 % labeled as either 'truncated' or 'occluded' using the PASCAL definitions
 % have the 'occ' flag set to true. Objects labeled as 'difficult' have the
-% 'ign' flag set to true. 'class' is used for 'lbl'.
+% 'ign' flag set to true. 'class' is used for 'lbl'. format=2 is the
+% ImageNet detection format and requires the ImageNet Dev Kit.
 %
 % FILTERING: After loading, the objects can be filtered. First, only
 % objects with lbl in lbls or ilbls or returned. For each object, obj.ign
@@ -186,7 +186,7 @@ function [objs,bbs] = bbLoad( fName, varargin )
 % INPUTS
 %  fName    - name of text file
 %  pLoad    - parameters (struct or name/value pairs)
-%   .format   - [0] gt format 0:default, 1:PASCAL
+%   .format   - [0] gt format 0:default, 1:PASCAL, 2:ImageNet
 %   .ellipse  - [1] controls how oriented bb is converted to regular bb
 %   .squarify - [] controls optional reshaping of bbs to fixed aspect ratio
 %   .lbls     - [] return objs with these labels (or [] to return all)
@@ -239,11 +239,23 @@ elseif( format==1 )
     error('bbLoad() requires the PASCAL VOC code.'); end
   os=PASreadrecord(fName); os=os.objects;
   n=length(os); objs=create(n);
+  if(~isfield(os,'occluded')), for i=1:n, os(i).occluded=0; end; end
   for i=1:n
     bb=os(i).bbox; bb(3)=bb(3)-bb(1); bb(4)=bb(4)-bb(2); objs(i).bb=bb;
     objs(i).lbl=os(i).class; objs(i).ign=os(i).difficult;
     objs(i).occ=os(i).occluded || os(i).truncated;
     if(objs(i).occ), objs(i).bbv=bb; end
+  end
+elseif( format==2 )
+  if(exist('VOCreadxml.m','file')~=2)
+    error('bbLoad() requires the ImageNet dev code.'); end
+  os=VOCreadxml(fName); os=os.annotation;
+  if(isfield(os,'object')), os=os.object; else os=[]; end
+  n=length(os); objs=create(n);
+  for i=1:n
+    bb=os(i).bndbox; bb=str2double({bb.xmin bb.ymin bb.xmax bb.ymax});
+    bb(3)=bb(3)-bb(1); bb(4)=bb(4)-bb(2); objs(i).bb=bb;
+    objs(i).lbl=os(i).name;
   end
 else error('bbLoad() unknown format: %i',format);
 end
@@ -355,7 +367,7 @@ nObj=length(objs);
 switch name
   case 'lbl', for i=1:nObj, objs(i).lbl=vals{i}; end
   case 'bb',  for i=1:nObj, objs(i).bb=vals(i,:); end
-  case 'occ', for i=1:nObj, objs(i).ooc=vals(i); end
+  case 'occ', for i=1:nObj, objs(i).occ=vals(i); end
   case 'bbv', for i=1:nObj, objs(i).bbv=vals(i,:); end
   case 'ign', for i=1:nObj, objs(i).ign=vals(i); end
   case 'ang', for i=1:nObj, objs(i).ang=vals(i); end
@@ -617,6 +629,7 @@ assert( size(gt0,2)==5 ); ng=size(gt0,1);
 gt=gt0; gt(:,5)=-gt(:,5); dt=dt0; dt=[dt zeros(nd,1)];
 
 % Attempt to match each (sorted) dt to each (sorted) gt
+oa = compOas( dt(:,1:4), gt(:,1:4), gt(:,5)==-1 );
 for d=1:nd
   bstOa=thr; bstg=0; bstm=0; % info about best match so far
   for g=1:ng
@@ -625,13 +638,12 @@ for d=1:nd
     % if dt already matched, and on ignore gt, nothing more to do
     if( bstm~=0 && m==-1 ), break; end
     % compute overlap area, continue to next gt unless better match made
-    oa=compOa(dt(d,1:4),gt(g,1:4),m==-1); if(oa<bstOa), continue; end
+    if(oa(d,g)<bstOa), continue; end
     % match successful and best so far, store appropriately
-    bstOa=oa; bstg=g; if(m==0), bstm=1; else bstm=-1; end
+    bstOa=oa(d,g); bstg=g; if(m==0), bstm=1; else bstm=-1; end
   end; g=bstg; m=bstm;
   % store type of match for both dt and gt
-  if(m==-1), assert(mul || gt(g,5)==m); dt(d,6)=m; end
-  if(m==1), assert(gt(g,5)==0); gt(g,5)=m; dt(d,6)=m; end
+  if(m==-1), dt(d,6)=m; elseif(m==1), gt(g,5)=m; dt(d,6)=m; end
 end
 
 end
