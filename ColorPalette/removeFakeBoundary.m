@@ -8,8 +8,6 @@ function [ newlabel_map, seg_obj ] = removeFakeBoundary( newlabel_map, long_cont
 
 [~, Al] = regionadjacency(newlabel_map, 4);
 mapping = 1:length(Al);
-se = se_disk(1);
-%long_conts_map_2 = imdilate(long_conts_map,se);
 label_1 = []; label_2 = []; diff_val = []; comm_val = [];
 
 %pre-calculate indexmap & dialate images & perim, area
@@ -20,9 +18,8 @@ area = zeros(1,length(Al));
 
 for l = 1:length(Al)
     label_map_binary{l} = newlabel_map == l;
-    mask{l} = imdilate(label_map_binary{l}, se);
-    [row, col] = find(label_map_binary{l});
-    perim(l) =2*(max(row) + max(col) - min(row) - min(col));
+    mask{l} = imdilate(label_map_binary{l}, se_disk(1));
+    perim(l) = sum(sum(label_map_binary{l} & ~imerode(label_map_binary{l}, se_disk(1))));
     area(l) = sum(label_map_binary{l}(:));
 end
 
