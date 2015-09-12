@@ -27,22 +27,22 @@ function [ newlabel_map, seg_obj ] = aggreg_regions( label_map, img, long_conts_
 merge_TH = 0.1;
 
 %% Step 1: Leakage Avoidance by Contours
-[newlabel_map, seg_obj] = avoidLeakage(label_map, long_conts_map, lab_data, areaTH);
+[newlabel_map] = avoidLeakage(label_map, long_conts_map, lab_data, areaTH);
 
 %% Step 2: Fake Boundary Removal
-[newlabel_map, seg_obj] = removeFakeBoundary(newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, merge_TH, 0.5);
+[newlabel_map, seg_obj] = removeFakeBoundary(newlabel_map, long_conts_map, lab_data, areaTH, merge_TH, 0.5);
 
 %% Step 3: Small Region Mergence
-[newlabel_map, seg_obj] = mergeSmallRegion(newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, 1);
+[newlabel_map] = mergeSmallRegion(newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, 1);
 
 %% Step 4: Fake Boundary Removal
-[newlabel_map, seg_obj] = removeFakeBoundary(newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, merge_TH, 0.3);
+[newlabel_map, seg_obj] = removeFakeBoundary(newlabel_map, long_conts_map, lab_data, areaTH, merge_TH, 0.3);
 
 %% Step 5: Small Region Mergence
-[newlabel_map, seg_obj] = mergeSmallRegion(newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, 0);
+[newlabel_map] = mergeSmallRegion(newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, 0);
 
 %% Step 6: Fake Boundary Removal
-[newlabel_map, seg_obj] = removeFakeBoundary(newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, merge_TH, 0.25);
+[newlabel_map, seg_obj] = removeFakeBoundary(newlabel_map, long_conts_map, lab_data, areaTH, merge_TH, 0.25);
 %[bound_segment, color_segment] = display_color_seg(img, newlabel_map(:));
 %figure, imshow(bound_segment);
 %figure, imshow(color_segment);
@@ -50,7 +50,7 @@ merge_TH = 0.1;
 end
 
 %% Leakage Avoidance: Split the region that are separated by long contour
-function [ newlabel_map, seg_obj ] = avoidLeakage( newlabel_map, long_conts_map, lab_data, areaTH )
+function [ newlabel_map ] = avoidLeakage( newlabel_map, long_conts_map, lab_data, areaTH )
 
 maxlabel = max(newlabel_map(:));
 
@@ -115,6 +115,6 @@ end
 
 newlabel_map = cleanupregions(newlabel_map, 0, 4);
 
-seg_obj = calSegObj(newlabel_map, long_conts_map, lab_data, areaTH);
+%seg_obj = calSegObj(newlabel_map, long_conts_map, lab_data, areaTH);
 
 end

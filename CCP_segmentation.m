@@ -1,6 +1,6 @@
-% This code is to produce contour-guided color palette segmentation in the submitted paper:
+% This code is to implement contour-guided color palette segmentation method described in:
 % "Robust Image Segmentation Using Contour-guided Color Palettes" 
-% Xiang Fu, Chien-Yi Wang, Chen Chen, Changhu Wang, C.-C. Jay Kuo. ICCV 2015
+% by Xiang Fu, Chien-Yi Wang, Chen Chen, Changhu Wang, and C.-C. Jay Kuo. ICCV 2015
 % {xiangfu, chienyiw, chen80}@usc.edu, chw@microsoft.com, cckuo@sipi.usc.edu
 %
 % Please contact the corresponding author if you have any questions.
@@ -27,18 +27,18 @@ sigma_c = 5;        % standard deviations of color
 sigma_s = 5;        % standard deviations of space
 
 % parameters for edge detection
-extRange = 4;       % range of edge extension to improve edge detection
-lengthTH = 10;      % length above this number will be long contour
+extRange = 4;       % edge extension to improve edge detection
+lengthTH = 10;      % length above this number is long ontour
 
 % parameters for mean shift (KEY parameter)
 msradius = 5;       % spectral radius for mean shift on sampled color space
 
 % parameters for region cleaning
-areaTH.large = 500; % area above this number will be large region
-areaTH.small = 200; % area blow this number will be small region
+areaTH.large = 500; % area above this number is large region
+areaTH.small = 200; % area blow this number is small region
 
 %% read color image
-img_name = '2092.jpg';
+img_name = '8068.jpg';
 ori_img  = imread(img_name);
 ori_img = imresize(ori_img, scale); % scale the image
 [H,W,C] = size(ori_img);
@@ -67,9 +67,9 @@ bin_edge_map = edgeExtension(edge_map>0.1, extRange);
 
 %% Contour-guided Color Palette
 % Color Palette Generation
-%tic;
+tic;
 [long_conts_map,sampledColor] = findSampledColor(lab_denoise, edgelist, lengthTH);
-%t1 = toc;
+t1 = toc;
 figure, imshow(1-long_conts_map);
 
 colorPalette = MeanShiftCluster(sampledColor', msradius)';

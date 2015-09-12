@@ -1,4 +1,4 @@
-function [ newlabel_map, seg_obj ] = mergeSmallRegion( newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, boolMergeSmall )
+function [ newlabel_map] = mergeSmallRegion( newlabel_map, long_conts_map, lab_data, seg_obj, areaTH, boolMergeSmall )
 %% Merge small regions
 maxlabel = max(newlabel_map(:));
 
@@ -80,6 +80,6 @@ for l = 1:maxlabel
 end
 newlabel_map = cleanupregions(newlabel_map, 0, 4);
 
-seg_obj = calSegObj(newlabel_map, long_conts_map, lab_data, areaTH);
+%seg_obj = calSegObj(newlabel_map, long_conts_map, lab_data, areaTH);
 
 end
